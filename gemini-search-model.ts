@@ -78,7 +78,6 @@ export default function geminiSearchModel(_pi: ExtensionAPI): void {
         const rewrittenUrl = rewriteGeminiModelInUrl(url, model)
         const rewrittenBody = rewriteGeminiModelInBody(body, source, model)
         if (rewrittenUrl !== url || rewrittenBody !== body) {
-          console.warn(`[gemini-search-model] web_search model ${source} -> ${model}`)
           const nextInput = rewrittenUrl !== url ? withUrl(input, rewrittenUrl) : input
           const [finalInput, finalInit] = rewrittenBody !== body ? withBody(nextInput, init, rewrittenBody) : [nextInput, init]
           return originalFetch(finalInput, finalInit)
@@ -90,5 +89,4 @@ export default function geminiSearchModel(_pi: ExtensionAPI): void {
   }) as typeof fetch
 
   g[MARK] = true
-  console.warn(`[gemini-search-model] installed; source=${source} target=${targetModel()}`)
 }
