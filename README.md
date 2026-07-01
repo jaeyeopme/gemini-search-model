@@ -3,20 +3,13 @@
 [![OMP Extension](https://img.shields.io/badge/OMP-extension-blue)](https://github.com/can1357/oh-my-pi)
 
 OMP extension that overrides the Gemini model for web_search grounded
-requests. When the grounding API rewrites your model, this extension swaps
-it back to your preferred model.
+requests.
 
-<details open>
-<summary><b>How it works</b></summary>
+## Why
 
-The extension intercepts `globalThis.fetch` and rewrites the model name in
-Gemini `:streamGenerateContent` requests whose body contains known
-grounded-search fingerprints (`googleSearch`, `google_search`, etc.).
-
-Both the URL path and the JSON body are patched — the URL receives the
-desired model, and the body replaces the source model string.
-
-</details>
+OMP's `web_search` tool uses a built-in grounding model that may differ
+from the model you actually want. Instead of the grounding service deciding
+your model, this extension lets you pick it yourself.
 
 ## Quick start
 
@@ -24,22 +17,19 @@ desired model, and the body replaces the source model string.
 omp extensions install jaeyeopme/gemini-search-model --enable
 ```
 
-The extension activates immediately. By default it rewrites `gemini-2.5-flash`
-→ `gemini-3.1-pro` for grounded search requests.
+The extension is idle by default — it passes requests through unchanged
+until you set the target model.
+
+```bash
+# Activate: rewrite grounded search requests to use gemini-3.1-pro
+export GEMINI_SEARCH_MODEL=gemini-3.1-pro
+```
 
 ## Configuration
 
 | Env var | Default | Description |
 | --- | --- | --- |
-| `GEMINI_SEARCH_MODEL` | `gemini-3.1-pro` | Target model for grounded search requests |
-
-The source model (what gets rewritten) is hardcoded to `gemini-2.5-flash` —
-the default grounding model injected by the web search tool.
-
-```bash
-# Use a different target model
-export GEMINI_SEARCH_MODEL=gemini-2.5-pro
-```
+| `GEMINI_SEARCH_MODEL` | _(none)_ | Target model for grounded search requests. Extension is pass-through when unset. |
 
 ## Requirements
 
