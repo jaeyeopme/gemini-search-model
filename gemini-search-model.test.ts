@@ -161,4 +161,25 @@ describe("geminiSearchModel integration", () => {
     expect(fetchCalls.length).toBe(1)
     expect(fetchCalls[0].init?.body).toBe(body)
   })
+
+  test("no-op when source equals target (default behavior)", async () => {
+    fetchCalls = []
+    process.env.GEMINI_SEARCH_MODEL = "gemini-2.5-flash"  // same as source
+
+    const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent"
+    const body = JSON.stringify({
+      model: "gemini-2.5-flash",
+      tools: [{ googleSearch: {} }],
+      contents: [{ parts: [{ text: "hello" }] }],
+    })
+
+    await globalThis.fetch(url, { body, method: "POST" })
+
+    // Should pass through unchanged since source == target
+    const calledUrl = typeof fetchCalls[0].input === "string"
+      ? fetchCalls[0].input
+      : (fetchCalls[0].input as Request).url
+    expect(calledUrl).toContain("gemini-2.5-flash")
+    expect(fetchCalls[0].init?.body).toBe(body)
+  })
 })

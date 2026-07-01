@@ -1,14 +1,15 @@
 // OMP extension: override Gemini model for web_search grounded requests.
-// Set GEMINI_SEARCH_MODEL to activate. Passes through when unset.
+// Defaults to gemini-2.5-flash (web search default). Set GEMINI_SEARCH_MODEL to change.
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent"
 
 const DEFAULT_SOURCE_MODEL = "gemini-2.5-flash"
+const DEFAULT_TARGET_MODEL = "gemini-2.5-flash"
 const MARK = Symbol.for("omp.gemini-search-model.installed")
 const GROUNDED_SEARCH_RE = /google[_ ]?search/i
 
 export function targetModel(): string {
-  return process.env.GEMINI_SEARCH_MODEL?.trim() || ""
+  return (process.env.GEMINI_SEARCH_MODEL || DEFAULT_TARGET_MODEL).trim()
 }
 
 export async function bodyText(input: RequestInfo | URL, init?: RequestInit): Promise<string | undefined> {
@@ -66,8 +67,6 @@ export default function geminiSearchModel(_pi: ExtensionAPI): void {
 
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const model = targetModel()
-    if (!model) return originalFetch(input, init)
-
     const url = requestUrl(input)
     const isGeminiGenerate = !!url && url.includes(":streamGenerateContent")
 
@@ -89,10 +88,5 @@ export default function geminiSearchModel(_pi: ExtensionAPI): void {
   }) as typeof fetch
 
   g[MARK] = true
-  const target = targetModel()
-  if (target) {
-    console.warn(`[gemini-search-model] installed; source=${source} target=${target}`)
-  } else {
-    console.warn(`[gemini-search-model] installed; GEMINI_SEARCH_MODEL not set — pass-through`)
-  }
+  console.warn(`[gemini-search-model] installed; source=${source} target=${targetModel()}`)
 }

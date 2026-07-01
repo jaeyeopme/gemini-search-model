@@ -17,11 +17,11 @@ your model, this extension lets you pick it yourself.
 omp extensions install jaeyeopme/gemini-search-model --enable
 ```
 
-The extension is idle by default — it passes requests through unchanged
-until you set the target model.
+By default the extension targets `gemini-2.5-flash` (the web search
+default), so it's a no-op until you change the model.
 
 ```bash
-# Activate: rewrite grounded search requests to use gemini-3.1-pro
+# Override: rewrite grounded search requests to use gemini-3.1-pro
 export GEMINI_SEARCH_MODEL=gemini-3.1-pro
 ```
 
@@ -29,7 +29,7 @@ export GEMINI_SEARCH_MODEL=gemini-3.1-pro
 
 | Env var | Default | Description |
 | --- | --- | --- |
-| `GEMINI_SEARCH_MODEL` | _(none)_ | Target model for grounded search requests. Extension is pass-through when unset. |
+| `GEMINI_SEARCH_MODEL` | `gemini-2.5-flash` | Target model for grounded search requests. |
 
 ## Requirements
 
@@ -47,6 +47,9 @@ omp extensions remove gemini-search-model
 ```bash
 # Install locally for testing
 omp extensions install ./gemini-search-model.ts --enable
+
+# Run tests
+bun test
 
 # Verify it's active
 GEMINI_SEARCH_MODEL=gemini-2.5-pro omp run "search the web for latest AI news"
