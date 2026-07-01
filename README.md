@@ -5,7 +5,7 @@
 OMP extension that overrides the Gemini model for web_search grounded
 requests.
 
-## Why
+## Motivation
 
 OMP's `web_search` tool uses a built-in grounding model that may differ
 from the model you actually want. Instead of the grounding service deciding
