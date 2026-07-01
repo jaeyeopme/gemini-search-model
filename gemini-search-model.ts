@@ -67,6 +67,8 @@ export default function geminiSearchModel(_pi: ExtensionAPI): void {
 
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const model = targetModel()
+    if (model === source) return originalFetch(input, init)
+
     const url = requestUrl(input)
     const isGeminiGenerate = !!url && url.includes(":streamGenerateContent")
 
