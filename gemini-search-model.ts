@@ -9,7 +9,7 @@ const MARK = Symbol.for("omp.gemini-search-model.installed")
 const GROUNDED_SEARCH_RE = /google[_ ]?search/i
 
 export function targetModel(): string {
-  return (process.env.GEMINI_SEARCH_MODEL || DEFAULT_TARGET_MODEL).trim()
+  return process.env.GEMINI_SEARCH_MODEL?.trim() || DEFAULT_TARGET_MODEL
 }
 
 export async function bodyText(input: RequestInfo | URL, init?: RequestInit): Promise<string | undefined> {

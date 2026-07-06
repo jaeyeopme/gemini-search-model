@@ -12,6 +12,33 @@ import {
 } from "./gemini-search-model"
 
 // ─── Pure transforms ─────────────────────────────────────────────
+describe("targetModel", () => {
+  test("falls back to the default when unset or blank", () => {
+    const previous = process.env.GEMINI_SEARCH_MODEL
+    try {
+      delete process.env.GEMINI_SEARCH_MODEL
+      expect(targetModel()).toBe("gemini-2.5-flash")
+
+      process.env.GEMINI_SEARCH_MODEL = "   "
+      expect(targetModel()).toBe("gemini-2.5-flash")
+    } finally {
+      if (previous === undefined) delete process.env.GEMINI_SEARCH_MODEL
+      else process.env.GEMINI_SEARCH_MODEL = previous
+    }
+  })
+
+  test("trims configured model overrides", () => {
+    const previous = process.env.GEMINI_SEARCH_MODEL
+    try {
+      process.env.GEMINI_SEARCH_MODEL = " gemini-3.1-pro "
+      expect(targetModel()).toBe("gemini-3.1-pro")
+    } finally {
+      if (previous === undefined) delete process.env.GEMINI_SEARCH_MODEL
+      else process.env.GEMINI_SEARCH_MODEL = previous
+    }
+  })
+})
+
 
 describe("rewriteGeminiModelInUrl", () => {
   test("replaces model in streamGenerateContent URL", () => {
